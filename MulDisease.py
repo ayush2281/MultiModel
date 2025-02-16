@@ -11,8 +11,8 @@ from streamlit_option_menu import option_menu
 
 # Load the saved models
 def load_models():
-    diabetes_model = pickle.load(open('C:/Users/lenovo/OneDrive/Desktop/mul-disease-pred-Sys/savedModel/diabetes_model.pkl', 'rb'))
-    heart_model = pickle.load(open('C:/Users/lenovo/OneDrive/Desktop/mul-disease-pred-Sys/savedModel/heart_disease_model (1).sav', 'rb'))
+    diabetes_model = pickle.load(open('diabetes_model.pkl', 'rb'))
+    heart_model = pickle.load(open('heart_disease_model (1).sav', 'rb'))
     return diabetes_model, heart_model
 
 diabetes_model, heart_model = load_models()
