@@ -25,6 +25,12 @@ with st.sidebar:
                            icons=['activity', 'heart-pulse-fill'],
                            default_index=0)
 
+def required_check(iterable):
+    for var in iterable:
+        if var=='':
+            return False
+    return True
+
 # Diabetes prediction page
 def diabetes_prediction_page(diabetes_model):
     st.title("Diabetes Prediction Using ML")
@@ -58,20 +64,25 @@ def diabetes_prediction_page(diabetes_model):
         
     with col3:
         Outcome = st.text_input('Number of Outcome')
+
+    diab_var = [Pregnancies,Glucose,BloodPressure,SkinThickness,Insulin,BMI,DiabetesPedigreeFunction,Age,Outcome]
     
     # Code for the Prediction
     diab_diagnosis = ''
     
     # Create a button for the Prediction
     if st.button('Diabetes Test Result'):
-        diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness,
-                                                   Insulin, BMI, DiabetesPedigreeFunction, Age]])
-        if diab_prediction[0] == 1:
-            diab_diagnosis = 'The Person is Diabetic'
+        if (required_check(diab_var)==True):
+            diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness,
+                                                    Insulin, BMI, DiabetesPedigreeFunction, Age]])
+            if diab_prediction[0] == 1:
+                diab_diagnosis = 'The Person is Diabetic'
+            else:
+                diab_diagnosis = 'The Person is Not Diabetic'
+                
+            st.success(diab_diagnosis)
         else:
-            diab_diagnosis = 'The Person is Not Diabetic'
-            
-    st.success(diab_diagnosis)
+            st.warning("Please fill all the details")
 
 # Heart disease prediction page
 def heart_disease_prediction_page(heart_model):
@@ -118,20 +129,24 @@ def heart_disease_prediction_page(heart_model):
     with col1:
         thal = st.text_input('Thal: 0 = Normal; 1 = Fixed Defect; 2 = Reversible Defect')
     
+    heart_var = [age, sex, cp, trestbps, chol, fbs, restecg,thalach, exang, oldpeak,slope, ca, thal]
     # Code for the Prediction
     heart_diagnosis = ''
     
     # Create a button for the Prediction
     if st.button('Heart Disease Test Result'):
-        heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,
-                                                 thalach, exang, oldpeak, slope, ca, thal]])
+        if (required_check(heart_var)==True):
+            heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,
+                                                    thalach, exang, oldpeak, slope, ca, thal]])
+            
+            if heart_prediction[0] == 1:
+                heart_diagnosis = 'The Person has Heart Disease'
+            else:
+                heart_diagnosis = 'The Person does not have Heart Disease'
         
-        if heart_prediction[0] == 1:
-            heart_diagnosis = 'The Person has Heart Disease'
+            st.success(heart_diagnosis)
         else:
-            heart_diagnosis = 'The Person does not have Heart Disease'
-    
-    st.success(heart_diagnosis)
+            st.warning("Please fill all the details")
 
 # Render the selected page
 if selected == 'Diabetes Disease Prediction':
