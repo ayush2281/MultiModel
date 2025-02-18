@@ -107,3 +107,46 @@ def heart_disease_prediction_page(heart_model):
 
     with col1:
         restecg = st.text_input('Resting Electrocardiographic Result')
+
+    with col2:
+        thalach = st.text_input('Thalach Value')
+
+    with col3:
+        exang = st.text_input('Exercise Induced Angina')
+
+    with col1:
+        oldpeak = st.text_input('ST Depression Induced by Exercise')
+
+    with col2:
+        slope = st.text_input('Slope of the Peak Exercise ST Segment')
+
+    with col3:
+        ca = st.text_input('Major Vessels Colored by Fluoroscopy')
+
+    with col1:
+        thal = st.text_input('Thal: 0 = Normal; 1 = Fixed Defect; 2 = Reversible Defect')
+
+    heart_var = [age, sex, cp, trestbps, chol, fbs, restecg,thalach, exang, oldpeak,slope, ca, thal]
+    # Code for the Prediction
+    heart_diagnosis = ''
+
+    # Create a button for the Prediction
+    if st.button('Heart Disease Test Result'):
+        if (required_check(heart_var)==True):
+            heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,
+                                                    thalach, exang, oldpeak, slope, ca, thal]])
+
+            if heart_prediction[0] == 1:
+                heart_diagnosis = 'The Person has Heart Disease'
+            else:
+                heart_diagnosis = 'The Person does not have Heart Disease'
+
+            st.success(heart_diagnosis)
+        else:
+            st.warning("Please fill all the details")
+
+# Render the selected page
+if selected == 'Diabetes Disease Prediction':
+    diabetes_prediction_page(diabetes_model)
+elif selected == 'Heart Disease Prediction':
+    heart_disease_prediction_page(heart_model)
