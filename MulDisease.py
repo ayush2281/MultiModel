@@ -93,13 +93,14 @@ def diabetes_prediction_page(diabetes_model):
             st.warning("Please fill all the details")
 
 # Heart disease prediction page
+# Heart disease prediction page
 def heart_disease_prediction_page(heart_model):
     st.title("Heart Disease Prediction Using ML")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        age = st.number_input('Age of the Person', min_value=0, step=1)
+        age = st.slider('Age of the Person', min_value=0, max_value=120, step=1)
     
     with col2:
         sex = st.selectbox('Enter Gender of the Person', options=['Male', 'Female'])
@@ -108,10 +109,10 @@ def heart_disease_prediction_page(heart_model):
         cp = st.selectbox('Chest Pain Types', options=['Type 1', 'Type 2', 'Type 3', 'Type 4'])
     
     with col1:
-        trestbps = st.number_input('Resting Blood Pressure', min_value=0, step=1)
+        trestbps = st.slider('Resting Blood Pressure', min_value=0, max_value=200, step=1)
     
     with col2:
-        chol = st.number_input('Serum Cholestoral in mg/dl', min_value=0, step=1)
+        chol = st.slider('Serum Cholestoral in mg/dl', min_value=0, max_value=600, step=1)
     
     with col3:
         fbs = st.selectbox('Fasting Blood Sugar > 120 mg/dl', options=['True', 'False'])
@@ -120,19 +121,19 @@ def heart_disease_prediction_page(heart_model):
         restecg = st.selectbox('Resting Electrocardiographic Result', options=['Normal', 'Abnormal'])
     
     with col2:
-        thalach = st.number_input('Thalach Value', min_value=0, step=1)
+        thalach = st.slider('Thalach Value', min_value=0, max_value=250, step=1)
     
     with col3:
         exang = st.selectbox('Exercise Induced Angina', options=['Yes', 'No'])
     
     with col1:
-        oldpeak = st.number_input('ST Depression Induced by Exercise', min_value=0.0, step=0.1)
+        oldpeak = st.slider('ST Depression Induced by Exercise', min_value=0.0, max_value=10.0, step=0.1)
     
     with col2:
         slope = st.selectbox('Slope of the Peak Exercise ST Segment', options=['Up', 'Flat', 'Down'])
     
     with col3:
-        ca = st.number_input('Major Vessels Colored by Fluoroscopy', min_value=0, step=1)
+        ca = st.slider('Major Vessels Colored by Fluoroscopy', min_value=0, max_value=4, step=1)
     
     with col1:
         thal = st.selectbox('Thal', options=['Normal', 'Fixed Defect', 'Reversible Defect'])
@@ -144,7 +145,7 @@ def heart_disease_prediction_page(heart_model):
     
     # Create a button for the Prediction
     if st.button('Heart Disease Test Result'):
-        if required_check(heart_var):
+        if required_check([age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]):
             heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,
                                                     thalach, exang, oldpeak, slope, ca, thal]])
             
@@ -155,15 +156,16 @@ def heart_disease_prediction_page(heart_model):
         
             st.success(heart_diagnosis)
             
-            # Visualize the results
+            # Enhanced Visualization
             labels = ['Heart Disease', 'No Heart Disease']
             sizes = [heart_prediction[0], 1 - heart_prediction[0]]
-            fig2, ax2 = plt.subplots()
-            ax2.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-            ax2.axis('equal')
-            st.pyplot(fig2)  # Added pie chart visualization
+            fig = px.pie(values=sizes, names=labels, title='Heart Disease Prediction Results')
+            st.plotly_chart(fig)  # Added Plotly chart visualization
         else:
             st.warning("Please fill all the details")
+    else:
+        st.info("Please fill in the details and click the button to get the result.")  # Added info message
+
 
 # User feedback page
 def user_feedback_page():
