@@ -8,6 +8,7 @@ Created on Sat Feb 15 13:58:09 2025
 import pickle
 import streamlit as st
 from streamlit_option_menu import option_menu
+import matplotlib.pyplot as plt  # Added for visualizations
 
 # Load the saved models
 def load_models():
@@ -21,8 +22,9 @@ diabetes_model, heart_model = load_models()
 with st.sidebar:
     selected = option_menu('Multiple Disease Prediction System',
                            ['Diabetes Disease Prediction',
-                            'Heart Disease Prediction'],
-                           icons=['activity', 'heart-pulse-fill'],
+                            'Heart Disease Prediction',
+                            'User Feedback'],  # Added User Feedback option
+                           icons=['activity', 'heart-pulse-fill', 'chat-right-dots'],
                            default_index=0)
 
 def required_check(iterable):
@@ -39,46 +41,53 @@ def diabetes_prediction_page(diabetes_model):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        Pregnancies = st.text_input('Number of Pregnancies')
+        Pregnancies = st.number_input('Number of Pregnancies', min_value=0, step=1)  # Changed to number_input
         
     with col2:
-        Glucose = st.text_input('Number of Glucose')
+        Glucose = st.number_input('Number of Glucose', min_value=0, step=1)
         
     with col3:
-        BloodPressure = st.text_input('Number of Blood Pressure')
+        BloodPressure = st.number_input('Number of Blood Pressure', min_value=0, step=1)
         
     with col1:
-        SkinThickness = st.text_input('Enter Skin Thickness')
+        SkinThickness = st.number_input('Enter Skin Thickness', min_value=0, step=1)
         
     with col2:
-        Insulin = st.text_input('Number of Insulin')
+        Insulin = st.number_input('Number of Insulin', min_value=0, step=1)
         
     with col3:
-        BMI = st.text_input('Number of BMI')
+        BMI = st.number_input('Number of BMI', min_value=0.0, step=0.1)  # Changed to float input
         
     with col1:
-        DiabetesPedigreeFunction = st.text_input('Number of Diabetes Pedigree Function')
+        DiabetesPedigreeFunction = st.number_input('Number of Diabetes Pedigree Function', min_value=0.0, step=0.01)
         
     with col2:
-        Age = st.text_input('Number of Age')
+        Age = st.number_input('Number of Age', min_value=0, step=1)
         
-
-    diab_var = [Pregnancies,Glucose,BloodPressure,SkinThickness,Insulin,BMI,DiabetesPedigreeFunction,Age]
+    diab_var = [Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age]
     
     # Code for the Prediction
     diab_diagnosis = ''
     
     # Create a button for the Prediction
     if st.button('Diabetes Test Result'):
-        if (required_check(diab_var)==True):
+        if required_check(diab_var):
             diab_prediction = diabetes_model.predict([[Pregnancies, Glucose, BloodPressure, SkinThickness,
-                                                    Insulin, BMI, DiabetesPedigreeFunction, Age]])
+                                                      Insulin, BMI, DiabetesPedigreeFunction, Age]])
             if diab_prediction[0] == 1:
                 diab_diagnosis = 'The Person is Diabetic'
             else:
                 diab_diagnosis = 'The Person is Not Diabetic'
                 
             st.success(diab_diagnosis)
+            
+            # Visualize the results
+            labels = ['Diabetic', 'Not Diabetic']
+            sizes = [diab_prediction[0], 1 - diab_prediction[0]]
+            fig1, ax1 = plt.subplots()
+            ax1.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+            ax1.axis('equal')
+            st.pyplot(fig1)  # Added pie chart visualization
         else:
             st.warning("Please fill all the details")
 
@@ -89,51 +98,52 @@ def heart_disease_prediction_page(heart_model):
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        age = st.text_input('Age of the Person')
+        age = st.number_input('Age of the Person', min_value=0, step=1)
     
     with col2:
-        sex = st.text_input('Enter Gender of the Person')
+        sex = st.selectbox('Enter Gender of the Person', options=['Male', 'Female'])
     
     with col3:
-        cp = st.text_input('Chest Pain Types')
+        cp = st.selectbox('Chest Pain Types', options=['Type 1', 'Type 2', 'Type 3', 'Type 4'])
     
     with col1:
-        trestbps = st.text_input('Resting Blood Pressure')
+        trestbps = st.number_input('Resting Blood Pressure', min_value=0, step=1)
     
     with col2:
-        chol = st.text_input('Serum Cholestoral in mg/dl')
+        chol = st.number_input('Serum Cholestoral in mg/dl', min_value=0, step=1)
     
     with col3:
-        fbs = st.text_input('Fasting Blood Sugar > 120 mg/dl')
+        fbs = st.selectbox('Fasting Blood Sugar > 120 mg/dl', options=['True', 'False'])
     
     with col1:
-        restecg = st.text_input('Resting Electrocardiographic Result')
+        restecg = st.selectbox('Resting Electrocardiographic Result', options=['Normal', 'Abnormal'])
     
     with col2:
-        thalach = st.text_input('Thalach Value')
+        thalach = st.number_input('Thalach Value', min_value=0, step=1)
     
     with col3:
-        exang = st.text_input('Exercise Induced Angina')
+        exang = st.selectbox('Exercise Induced Angina', options=['Yes', 'No'])
     
     with col1:
-        oldpeak = st.text_input('ST Depression Induced by Exercise')
+        oldpeak = st.number_input('ST Depression Induced by Exercise', min_value=0.0, step=0.1)
     
     with col2:
-        slope = st.text_input('Slope of the Peak Exercise ST Segment')
+        slope = st.selectbox('Slope of the Peak Exercise ST Segment', options=['Up', 'Flat', 'Down'])
     
     with col3:
-        ca = st.text_input('Major Vessels Colored by Fluoroscopy')
+        ca = st.number_input('Major Vessels Colored by Fluoroscopy', min_value=0, step=1)
     
     with col1:
-        thal = st.text_input('Thal: 0 = Normal; 1 = Fixed Defect; 2 = Reversible Defect')
+        thal = st.selectbox('Thal', options=['Normal', 'Fixed Defect', 'Reversible Defect'])
     
-    heart_var = [age, sex, cp, trestbps, chol, fbs, restecg,thalach, exang, oldpeak,slope, ca, thal]
+    heart_var = [age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal]
+    
     # Code for the Prediction
     heart_diagnosis = ''
     
     # Create a button for the Prediction
     if st.button('Heart Disease Test Result'):
-        if (required_check(heart_var)==True):
+        if required_check(heart_var):
             heart_prediction = heart_model.predict([[age, sex, cp, trestbps, chol, fbs, restecg,
                                                     thalach, exang, oldpeak, slope, ca, thal]])
             
@@ -143,11 +153,28 @@ def heart_disease_prediction_page(heart_model):
                 heart_diagnosis = 'The Person does not have Heart Disease'
         
             st.success(heart_diagnosis)
+            
+            # Visualize the results
+            labels = ['Heart Disease', 'No Heart Disease']
+            sizes = [heart_prediction[0], 1 - heart_prediction[0]]
+            fig2, ax2 = plt.subplots()
+            ax2.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+            ax2.axis('equal')
+            st.pyplot(fig2)  # Added pie chart visualization
         else:
             st.warning("Please fill all the details")
+
+# User feedback page
+def user_feedback_page():
+    st.title("User Feedback")
+    feedback = st.text_area("Please provide your feedback here")
+    if st.button("Submit Feedback"):
+        st.success("Thank you for your feedback!")
 
 # Render the selected page
 if selected == 'Diabetes Disease Prediction':
     diabetes_prediction_page(diabetes_model)
 elif selected == 'Heart Disease Prediction':
     heart_disease_prediction_page(heart_model)
+elif selected == 'User Feedback':
+    user_feedback_page()  # Added user feedback page
