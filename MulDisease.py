@@ -63,7 +63,7 @@ def diabetes_prediction_page(diabetes_model):
         Age = st.text_input('Number of Age')
         
 
-    diab_var = [Pregnancies,Glucose,BloodPressure,SkinThickness,Insulin,BMI,DiabetesPedigreeFunction,Age,Outcome]
+    diab_var = [Pregnancies,Glucose,BloodPressure,SkinThickness,Insulin,BMI,DiabetesPedigreeFunction,Age]
     
     # Code for the Prediction
     diab_diagnosis = ''
